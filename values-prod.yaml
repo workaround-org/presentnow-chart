@@ -1,5 +1,5 @@
 backend:
-  image: ghcr.io/workaround-org/presentnow-backend:latest
+  image: ghcr.io/workaround-org/presentnow-backend:dev-20
   replicas: 3  # Increased for prod
   resources:
     limits:
@@ -11,7 +11,7 @@ backend:
     QUARKUS_DATASOURCE_PASSWORD: "presentnow"
 
 frontend:
-  image: code.mymiggi.de/miggi/presentnow-frontend-v2
+  image: code.mymiggi.de/miggi/presentnow-frontend-v2:dev-6
   replicas: 3  # Increased for prod
   resources:
     limits:

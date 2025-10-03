@@ -1,6 +1,6 @@
 backend:
   image: ghcr.io/workaround-org/presentnow-backend:latest
-  replicas: 2
+  replicas: 1
   resources:
     limits:
       cpu: "100m"
@@ -12,7 +12,7 @@ backend:
 
 frontend:
   image: code.mymiggi.de/miggi/presentnow-frontend-v2
-  replicas: 2
+  replicas: 1
   resources:
     limits:
       cpu: "50m"
