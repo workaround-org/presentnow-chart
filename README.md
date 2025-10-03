@@ -51,7 +51,7 @@ The following table lists the configurable parameters of the Present Now chart a
 |-----------|-------------|---------|
 | `backend.image` | Backend container image | `ghcr.io/workaround-org/presentnow-backend:latest` |
 | `backend.replicas` | Number of backend replicas | `2` |
-| `frontend.image` | Frontend container image | `code.mymiggi.de/miggi/presentnow-frontend-v2` |
+| `frontend.image` | Frontend container image | `ghcr.io/workaround-org/presentnow-frontend:latest` |
 | `frontend.replicas` | Number of frontend replicas | `2` |
 | `postgres.image` | PostgreSQL container image | `postgres:16-alpine` |
 | `postgres.storage` | PostgreSQL storage size | `1Gi` |
