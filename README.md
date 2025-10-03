@@ -9,11 +9,25 @@ A Helm chart for deploying the Present Now application, which includes a Quarkus
 - **PostgreSQL**: Database for data persistence
 - **Ingress**: Configured with TLS termination
 
+**Note**: Database credentials are managed via an external Kubernetes secret named `present-now-secrets`.
+
 ## Prerequisites
 
 - Kubernetes cluster
 - Helm 3.x
 - cert-manager (for TLS certificates)
+
+## Secrets
+
+The chart requires a Kubernetes secret containing database credentials. Create it before installing the chart:
+
+```bash
+kubectl create secret generic present-now-secrets \
+  --from-literal=postgres-user=your-username \
+  --from-literal=postgres-password=your-password
+```
+
+Replace `your-username` and `your-password` with your actual database credentials.
 
 ## Installation
 
