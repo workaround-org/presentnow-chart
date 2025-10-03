@@ -32,7 +32,7 @@ Replace `your-username` and `your-password` with your actual database credential
 ## Installation
 
 ```bash
-helm install present-now ./present-now-chart
+helm install present-now . -n presentnow-dev
 ```
 
 ## Upgrading
@@ -40,7 +40,7 @@ helm install present-now ./present-now-chart
 To upgrade an existing release:
 
 ```bash
-helm upgrade present-now ./present-now-chart
+helm upgrade present-now . -n presentnow-dev
 ```
 
 ## Configuration
