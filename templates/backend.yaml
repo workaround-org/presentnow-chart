@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "present-now.fullname" . }}-api
+  labels:
+    app: {{ include "present-now.fullname" . }}-api
+spec:
+  replicas: {{ .Values.backend.replicas }}
+  selector:
+    matchLabels:
+      app: {{ include "present-now.fullname" . }}-api
+  template:
+    metadata:
+      labels:
+        app: {{ include "present-now.fullname" . }}-api
+    spec:
+      containers:
+        - name: api
+          image: {{ .Values.backend.image }}
+          imagePullPolicy: Always
+          env:
+            - name: QUARKUS_HTTP_CORS_ORIGINS
+              value: "https://{{ .Values.ingress.host }}"
+          {{- range $key, $value := .Values.backend.env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+          {{- end }}
+          ports:
+            - name: app
+              containerPort: 8080
+            - name: mgmt
+              containerPort: 9000
+          livenessProbe:
+            httpGet:
+              path: /q/health/live
+              port: 9000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /q/health/ready
+              port: 9000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          resources:
+            {{- toYaml .Values.backend.resources | nindent 12 }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: presentnow-api-service
+spec:
+  selector:
+    app: {{ include "present-now.fullname" . }}-api
+  ports:
+    - port: 8080
+      targetPort: 8080
