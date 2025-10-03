@@ -21,6 +21,8 @@ postgres:
   replicas: 1
   storage: 10Gi  # Increased storage for prod
   storageClass: longhorn
+  persistence:
+    enabled: true
   env:
     POSTGRES_DB: "presentnow"
     PGDATA: "/var/lib/postgresql/data/pgdata"
