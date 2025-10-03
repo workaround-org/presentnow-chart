@@ -1,10 +1,10 @@
 backend:
   image: ghcr.io/workaround-org/presentnow-backend:latest
-  replicas: 2
+  replicas: 3  # Increased for prod
   resources:
     limits:
-      cpu: "100m"
-      memory: "100Mi"
+      cpu: "200m"
+      memory: "256Mi"
   env:
     QUARKUS_DATASOURCE_JDBC_URL: "jdbc:postgresql://presentnow-postgres-service:5432/presentnow"
     QUARKUS_DATASOURCE_USERNAME: "presentnow"
@@ -12,16 +12,16 @@ backend:
 
 frontend:
   image: code.mymiggi.de/miggi/presentnow-frontend-v2
-  replicas: 2
+  replicas: 3  # Increased for prod
   resources:
     limits:
-      cpu: "50m"
-      memory: "10Mi"
+      cpu: "100m"
+      memory: "50Mi"
 
 postgres:
   image: postgres:16-alpine
   replicas: 1
-  storage: 1Gi
+  storage: 10Gi  # Increased storage for prod
   storageClass: longhorn
   env:
     POSTGRES_USER: "presentnow"
@@ -30,11 +30,12 @@ postgres:
     PGDATA: "/var/lib/postgresql/data/pgdata"
   resources:
     limits:
-      cpu: "100m"
-      memory: "120Mi"
+      cpu: "200m"
+      memory: "512Mi"
 
 ingress:
   hosts:
-    - presentnow.dev.ha1nz.de
-  tlsSecret: presentnow-tls
+    - presentnow.prod.ha1nz.de
+    - ideas.ha1nz.de
+  tlsSecret: presentnow-prod-tls
   issuer: letsencrypt-prod

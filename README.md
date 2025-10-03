@@ -41,7 +41,7 @@ The following table lists the configurable parameters of the Present Now chart a
 | `frontend.replicas` | Number of frontend replicas | `2` |
 | `postgres.image` | PostgreSQL container image | `postgres:16-alpine` |
 | `postgres.storage` | PostgreSQL storage size | `1Gi` |
-| `ingress.host` | Ingress host | `presentnow.dev.ha1nz.de` |
+| `ingress.hosts` | List of ingress hosts | `["presentnow.dev.ha1nz.de"]` |
 | `ingress.tlsSecret` | TLS secret name | `presentnow-tls` |
 
 ## Values
