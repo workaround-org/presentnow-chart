@@ -1,5 +1,5 @@
 backend:
-  image: ghcr.io/workaround-org/presentnow-backend:latest
+  image: ghcr.io/workaround-org/presentnow-backend:dev-24
   replicas: 2
   resources:
     limits:
@@ -9,7 +9,7 @@ backend:
     QUARKUS_DATASOURCE_JDBC_URL: "jdbc:postgresql://presentnow-postgres-service:5432/presentnow"
 
 frontend:
-  image: code.mymiggi.de/miggi/presentnow-frontend-v2
+  image: code.mymiggi.de/miggi/presentnow-frontend-v2:dev-8
   replicas: 2
   resources:
     limits:
