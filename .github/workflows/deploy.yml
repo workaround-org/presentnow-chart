@@ -1,0 +1,53 @@
+name: Deploy Helm Chart
+
+on:
+  push:
+    branches:
+      - main  # Or your default branch
+  release:
+    types: [published]
+  workflow_dispatch:  # For manual triggers
+
+env:
+  CHART_PATH: ./charts/presentnow-chart  # Adjust to your chart's path
+  RELEASE_NAME: presentnow-release
+  NAMESPACE: default  # Change to your target namespace
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: v3.12.0  # Use a specific version for consistency
+
+      - name: Configure kubectl
+        uses: azure/k8s-set-context@v3
+        with:
+          kubeconfig: ${{ secrets.KUBECONFIG_SECRET }}  # Base64-encoded kube config as a secret
+
+      - name: Update dependencies
+        run: helm dependency update ${{ env.CHART_PATH }}
+
+      - name: Lint chart
+        run: helm lint ${{ env.CHART_PATH }}
+
+      - name: Dry-run deployment
+        run: |
+          helm upgrade --install ${{ env.RELEASE_NAME }} ${{ env.CHART_PATH }} \
+            --namespace ${{ env.NAMESPACE }} \
+            --values ${{ env.CHART_PATH }}/values.yaml \
+            --dry-run \
+            --debug
+
+      - name: Deploy to cluster
+        run: |
+          helm upgrade --install ${{ env.RELEASE_NAME }} ${{ env.CHART_PATH }} \
+            --namespace ${{ env.NAMESPACE }} \
+            --values ${{ env.CHART_PATH }}/values.yaml \
+            --wait \
+            --timeout 600s
