@@ -22,10 +22,9 @@ jobs:
       - name: Setup kubeconfig
         run: |
           mkdir -p ${{ github.workspace }}/.kube
-          # Decode base64 kubeconfig
-          echo "$KUBECONFIG_SECRET" | base64 -d > ${{ github.workspace }}/.kube/config
+          echo "$KUBECONFIG_SECRET" > ${{ github.workspace }}/.kube/config
           chmod 600 ${{ github.workspace }}/.kube/config
-          # Verify the kubeconfig was decoded properly
+          # Verify the kubeconfig file
           if [ ! -s ${{ github.workspace }}/.kube/config ]; then
             echo "Error: kubeconfig file is empty"
             exit 1
