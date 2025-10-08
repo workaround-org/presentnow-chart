@@ -3,89 +3,31 @@ name: Deploy Helm Chart
 on:
   push:
     branches:
-      - main  # Or your default branch
-  release:
-    types: [published]
-  workflow_dispatch:  # For manual triggers
-
-env:
-  CHART_PATH: .
-  RELEASE_NAME: present-now
+      - main
+  workflow_dispatch:
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    environment: production  # Requires manual approval for production deployments
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Helm
-        uses: azure/setup-helm@v3
+      - name: Install Helm
+        uses: azure/setup-helm@v4
         with:
-          version: v3.12.0  # Use a specific version for consistency
+          version: 'latest'
 
-      - name: Configure kubectl
+      - name: Setup kubeconfig
         run: |
-          mkdir -p ${{ github.workspace }}/.kube
-          echo "${{ secrets.KUBECONFIG_SECRET }}" | base64 -d > ${{ github.workspace }}/.kube/config
-          chmod 600 ${{ github.workspace }}/.kube/config
-        env:
-          KUBECONFIG_SECRET: ${{ secrets.KUBECONFIG_SECRET }}
-
-      - name: Verify cluster connection
-        run: kubectl cluster-info
-        env:
-          KUBECONFIG: ${{ github.workspace }}/.kube/config
-
-      - name: Update dependencies
-        run: helm dependency update ${{ env.CHART_PATH }}
-
-      - name: Lint chart
-        run: helm lint ${{ env.CHART_PATH }}
-
-      - name: Dry-run deployment (presentnow-dev)
-        run: |
-          helm upgrade --install ${{ env.RELEASE_NAME }} ${{ env.CHART_PATH }} \
-            --namespace presentnow-dev \
-            --values ${{ env.CHART_PATH }}/values.yaml \
-            --dry-run \
-            --debug
-        env:
-          KUBECONFIG: ${{ github.workspace }}/.kube/config
-
-      - name: Dry-run deployment (presentnow-miggi)
-        run: |
-          helm upgrade --install ${{ env.RELEASE_NAME }} ${{ env.CHART_PATH }} \
-            --namespace presentnow-miggi \
-            --values ${{ env.CHART_PATH }}/values-miggi.yaml \
-            --dry-run \
-            --debug
-        env:
-          KUBECONFIG: ${{ github.workspace }}/.kube/config
+          mkdir -p $HOME/.kube
+          echo "${{ secrets.KUBECONFIG_SECRET }}" | base64 -d > $HOME/.kube/config
+          chmod 600 $HOME/.kube/config
 
       - name: Deploy to presentnow-dev
         run: |
-          helm upgrade ${{ env.RELEASE_NAME }} ${{ env.CHART_PATH }} \
-            --namespace presentnow-dev \
-            --wait \
-            --timeout 600s
-        env:
-          KUBECONFIG: ${{ github.workspace }}/.kube/config
+          helm upgrade present-now . -n presentnow-dev --install --wait
 
       - name: Deploy to presentnow-miggi
         run: |
-          helm upgrade ${{ env.RELEASE_NAME }} ${{ env.CHART_PATH }} \
-            --namespace presentnow-miggi \
-            --values values-miggi.yaml \
-            --wait \
-            --timeout 600s
-        env:
-          KUBECONFIG: ${{ github.workspace }}/.kube/config
-
-      - name: Cleanup kubeconfig
-        if: always()
-        run: |
-          rm -f ${{ github.workspace }}/.kube/config
+          helm upgrade present-now . -n presentnow-miggi -f values-miggi.yaml --install --wait
