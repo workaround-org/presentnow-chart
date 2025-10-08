@@ -9,9 +9,8 @@ on:
   workflow_dispatch:  # For manual triggers
 
 env:
-  CHART_PATH: ./charts/presentnow-chart  # Adjust to your chart's path
-  RELEASE_NAME: presentnow-release
-  NAMESPACE: default  # Change to your target namespace
+  CHART_PATH: .
+  RELEASE_NAME: present-now
 
 jobs:
   deploy:
@@ -36,18 +35,33 @@ jobs:
       - name: Lint chart
         run: helm lint ${{ env.CHART_PATH }}
 
-      - name: Dry-run deployment
+      - name: Dry-run deployment (presentnow-dev)
         run: |
           helm upgrade --install ${{ env.RELEASE_NAME }} ${{ env.CHART_PATH }} \
-            --namespace ${{ env.NAMESPACE }} \
+            --namespace presentnow-dev \
             --values ${{ env.CHART_PATH }}/values.yaml \
             --dry-run \
             --debug
 
-      - name: Deploy to cluster
+      - name: Dry-run deployment (presentnow-miggi)
         run: |
           helm upgrade --install ${{ env.RELEASE_NAME }} ${{ env.CHART_PATH }} \
-            --namespace ${{ env.NAMESPACE }} \
-            --values ${{ env.CHART_PATH }}/values.yaml \
+            --namespace presentnow-miggi \
+            --values ${{ env.CHART_PATH }}/values-miggi.yaml \
+            --dry-run \
+            --debug
+
+      - name: Deploy to presentnow-dev
+        run: |
+          helm upgrade ${{ env.RELEASE_NAME }} ${{ env.CHART_PATH }} \
+            --namespace presentnow-dev \
+            --wait \
+            --timeout 600s
+
+      - name: Deploy to presentnow-miggi
+        run: |
+          helm upgrade ${{ env.RELEASE_NAME }} ${{ env.CHART_PATH }} \
+            --namespace presentnow-miggi \
+            --values values-miggi.yaml \
             --wait \
             --timeout 600s
