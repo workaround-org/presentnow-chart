@@ -15,6 +15,9 @@ env:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    environment: production  # Requires manual approval for production deployments
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -25,9 +28,12 @@ jobs:
           version: v3.12.0  # Use a specific version for consistency
 
       - name: Configure kubectl
-        uses: azure/k8s-set-context@v3
-        with:
-          kubeconfig: ${{ secrets.KUBECONFIG_SECRET }}  # Base64-encoded kube config as a secret
+        run: |
+          mkdir -p $HOME/.kube
+          echo "${{ secrets.KUBECONFIG_SECRET }}" | base64 -d > $HOME/.kube/config
+          chmod 600 $HOME/.kube/config
+        env:
+          KUBECONFIG_SECRET: ${{ secrets.KUBECONFIG_SECRET }}
 
       - name: Update dependencies
         run: helm dependency update ${{ env.CHART_PATH }}
@@ -65,3 +71,8 @@ jobs:
             --values values-miggi.yaml \
             --wait \
             --timeout 600s
+
+      - name: Cleanup kubeconfig
+        if: always()
+        run: |
+          rm -f $HOME/.kube/config
