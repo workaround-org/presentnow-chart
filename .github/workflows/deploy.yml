@@ -22,11 +22,22 @@ jobs:
       - name: Setup kubeconfig
         run: |
           mkdir -p ${{ github.workspace }}/.kube
-          echo "${{ secrets.KUBECONFIG_SECRET }}" | base64 -d > ${{ github.workspace }}/.kube/config
+          # Decode base64 kubeconfig
+          echo "$KUBECONFIG_SECRET" | base64 -d > ${{ github.workspace }}/.kube/config
           chmod 600 ${{ github.workspace }}/.kube/config
+          # Verify the kubeconfig was decoded properly
+          if [ ! -s ${{ github.workspace }}/.kube/config ]; then
+            echo "Error: kubeconfig file is empty"
+            exit 1
+          fi
+          echo "Kubeconfig file size: $(wc -c < ${{ github.workspace }}/.kube/config) bytes"
+        env:
+          KUBECONFIG_SECRET: ${{ secrets.KUBECONFIG_SECRET }}
 
       - name: Verify kubectl connection
         run: |
+          export KUBECONFIG=${{ github.workspace }}/.kube/config
+          echo "Current KUBECONFIG: $KUBECONFIG"
           kubectl config view
           kubectl config get-contexts
           kubectl cluster-info
