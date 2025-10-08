@@ -1,0 +1,49 @@
+name: Deploy Present Now Chart
+
+on:
+  push:
+    branches:
+      - main
+      - action
+  workflow_dispatch:
+
+env:
+  RELEASE_NAME: present-now
+  NAMESPACE: presentnow-dev
+  MIGGI_NAMESPACE: presentnow-miggi
+  MIGGI_VALUES_FILE: values-miggi.yaml
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v4
+
+      - name: Configure kubeconfig
+        env:
+          KUBECONFIG_SECRET: ${{ secrets.KUBECONFIG }}
+        run: |
+          export KUBECONFIG_PATH="$RUNNER_TEMP/kubeconfig"
+          mkdir -p "$(dirname "$KUBECONFIG_PATH")"
+          printf '%s\n' "$KUBECONFIG_SECRET" > "$KUBECONFIG_PATH"
+          chmod 600 "$KUBECONFIG_PATH"
+          echo "KUBECONFIG=$KUBECONFIG_PATH" >> "$GITHUB_ENV"
+          echo "KUBECONFIG_PATH=$KUBECONFIG_PATH" >> "$GITHUB_ENV"
+
+      - name: Deploy chart
+        run: |
+          helm upgrade $RELEASE_NAME . -n $NAMESPACE
+          helm upgrade $RELEASE_NAME . -n $MIGGI_NAMESPACE -f $MIGGI_VALUES_FILE
+
+      - name: Cleanup kubeconfig
+        if: always()
+        run: |
+          if [ -n "$KUBECONFIG_PATH" ] && [ -f "$KUBECONFIG_PATH" ]; then
+            rm -f "$KUBECONFIG_PATH"
+          fi
