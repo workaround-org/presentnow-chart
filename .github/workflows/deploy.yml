@@ -32,6 +32,7 @@ jobs:
           mkdir -p $HOME/.kube
           echo "${{ secrets.KUBECONFIG_SECRET }}" | base64 -d > $HOME/.kube/config
           chmod 600 $HOME/.kube/config
+          echo "KUBECONFIG=$HOME/.kube/config" >> $GITHUB_ENV
         env:
           KUBECONFIG_SECRET: ${{ secrets.KUBECONFIG_SECRET }}
 
