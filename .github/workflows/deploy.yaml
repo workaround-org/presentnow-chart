@@ -10,6 +10,7 @@ on:
 env:
   RELEASE_NAME: present-now
   NAMESPACE: presentnow-dev
+  KUBECONFIG_PATH: ${{ runner.temp }}/kubeconfig
 
 jobs:
   deploy:
@@ -27,10 +28,15 @@ jobs:
         env:
           KUBECONFIG_SECRET: ${{ secrets.KUBECONFIG }}
         run: |
-          mkdir -p "$HOME/.kube"
-          printf '%s\n' "$KUBECONFIG_SECRET" > "$HOME/.kube/config"
-          chmod 600 "$HOME/.kube/config"
-          echo "KUBECONFIG=$HOME/.kube/config" >> "$GITHUB_ENV"
+          mkdir -p "$(dirname "$KUBECONFIG_PATH")"
+          printf '%s\n' "$KUBECONFIG_SECRET" > "$KUBECONFIG_PATH"
+          chmod 600 "$KUBECONFIG_PATH"
 
       - name: Deploy chart
+        env:
+          KUBECONFIG: ${{ env.KUBECONFIG_PATH }}
         run: helm upgrade $RELEASE_NAME . -n $NAMESPACE
+
+      - name: Cleanup kubeconfig
+        if: always()
+        run: rm -f "$KUBECONFIG_PATH"
