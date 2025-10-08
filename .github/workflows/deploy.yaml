@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - action
   workflow_dispatch:
 
 env:
@@ -25,14 +24,12 @@ jobs:
 
       - name: Configure kubeconfig
         env:
-          KUBECONFIG: ${{ secrets.KUBECONFIG }}
+          KUBECONFIG_SECRET: ${{ secrets.KUBECONFIG }}
         run: |
           mkdir -p "$HOME/.kube"
-          printf '%s\n' "$KUBECONFIG" > "$HOME/.kube/config"
+          printf '%s\n' "$KUBECONFIG_SECRET" > "$HOME/.kube/config"
           chmod 600 "$HOME/.kube/config"
-          ls -lha "$HOME/.kube/config"
+          echo "KUBECONFIG=$HOME/.kube/config" >> "$GITHUB_ENV"
 
       - name: Deploy chart
-        env:
-          KUBECONFIG: $HOME/.kube/config
         run: helm upgrade $RELEASE_NAME . -n $NAMESPACE
