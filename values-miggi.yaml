@@ -4,7 +4,7 @@ backend:
   resources:
     limits:
       cpu: "100m"
-      memory: "100Mi"
+      memory: "50Mi"
   env:
     QUARKUS_DATASOURCE_JDBC_URL: "jdbc:postgresql://presentnow-postgres-service:5432/presentnow"
 
