@@ -10,6 +10,8 @@ on:
 env:
   RELEASE_NAME: present-now
   NAMESPACE: presentnow-dev
+  MIGGI_NAMESPACE: presentnow-miggi
+  MIGGI_VALUES_FILE: values-miggi.yaml
 
 jobs:
   deploy:
@@ -35,7 +37,9 @@ jobs:
           echo "KUBECONFIG_PATH=$KUBECONFIG_PATH" >> "$GITHUB_ENV"
 
       - name: Deploy chart
-        run: helm upgrade $RELEASE_NAME . -n $NAMESPACE
+        run: |
+          helm upgrade $RELEASE_NAME . -n $NAMESPACE
+          helm upgrade $RELEASE_NAME . -n $MIGGI_NAMESPACE -f $MIGGI_VALUES_FILE
 
       - name: Cleanup kubeconfig
         if: always()
