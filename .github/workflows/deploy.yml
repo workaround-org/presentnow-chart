@@ -24,14 +24,24 @@ jobs:
           echo "${{ secrets.KUBECONFIG_SECRET }}" | base64 -d > ${{ github.workspace }}/.kube/config
           chmod 600 ${{ github.workspace }}/.kube/config
 
+      - name: Verify kubectl connection
+        run: |
+          kubectl config view
+          kubectl config get-contexts
+          kubectl cluster-info
+        env:
+          KUBECONFIG: ${{ github.workspace }}/.kube/config
+
       - name: Deploy to presentnow-dev
         run: |
+          kubectl config use-context $(kubectl config current-context)
           helm upgrade present-now . -n presentnow-dev --install --wait
         env:
           KUBECONFIG: ${{ github.workspace }}/.kube/config
 
       - name: Deploy to presentnow-miggi
         run: |
+          kubectl config use-context $(kubectl config current-context)
           helm upgrade present-now . -n presentnow-miggi -f values-miggi.yaml --install --wait
         env:
           KUBECONFIG: ${{ github.workspace }}/.kube/config
