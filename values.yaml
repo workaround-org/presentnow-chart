@@ -22,7 +22,7 @@ postgres:
   storage: 1Gi
   storageClass: longhorn
   persistence:
-    enabled: false
+    enabled: true
   env:
     POSTGRES_DB: "presentnow"
     PGDATA: "/var/lib/postgresql/data/pgdata"
