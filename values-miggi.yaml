@@ -1,5 +1,5 @@
 backend:
-  image: ghcr.io/workaround-org/presentnow-backend:dev-30
+  image: ghcr.io/workaround-org/presentnow-backend:dev-31
   replicas: 2
   resources:
     limits:
