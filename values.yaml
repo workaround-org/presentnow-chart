@@ -6,7 +6,7 @@ backend:
       cpu: "100m"
       memory: "100Mi"
   env:
-    QUARKUS_DATASOURCE_JDBC_URL: "jdbc:postgresql://unstable-postgres-rw.unstable-postgres.svc.cluster.local:5432/presentnow"
+    QUARKUS_DATASOURCE_JDBC_URL: "jdbc:postgresql://unstable-postgres-rw.unstable-postgres.svc.cluster.local:5432/presentnow-dev"
 
 frontend:
   image: ghcr.io/workaround-org/presentnow-frontend:latest
