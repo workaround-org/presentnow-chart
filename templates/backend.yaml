@@ -26,13 +26,13 @@ spec:
             - name: QUARKUS_DATASOURCE_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: present-now-secrets
-                  key: postgres-user
+                  name: unstable-project-quarkus
+                  key: username
             - name: QUARKUS_DATASOURCE_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: present-now-secrets
-                  key: postgres-password
+                  name: unstable-project-quarkus
+                  key: password
           ports:
             - name: app
               containerPort: 8080
