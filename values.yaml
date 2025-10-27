@@ -16,21 +16,6 @@ frontend:
       cpu: "50m"
       memory: "10Mi"
 
-postgres:
-  image: postgres:16-alpine
-  replicas: 1
-  storage: 1Gi
-  storageClass: longhorn
-  persistence:
-    enabled: true
-  env:
-    POSTGRES_DB: "presentnow"
-    PGDATA: "/var/lib/postgresql/data/pgdata"
-  resources:
-    limits:
-      cpu: "100m"
-      memory: "120Mi"
-
 ingress:
   hosts:
     - presentnow.dev.u-project.de
