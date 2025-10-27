@@ -26,12 +26,12 @@ spec:
             - name: QUARKUS_DATASOURCE_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: unstable-project-quarkus
+                  name: unstable-postgres-quarkus
                   key: username
             - name: QUARKUS_DATASOURCE_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: unstable-project-quarkus
+                  name: unstable-postgres-quarkus
                   key: password
           ports:
             - name: app
