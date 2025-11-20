@@ -19,5 +19,6 @@ frontend:
 ingress:
   hosts:
     - ideas.ha1nz.de
+    - presentnow.u-project.de
   tlsSecret: presentnow-tls
   issuer: letsencrypt-prod
