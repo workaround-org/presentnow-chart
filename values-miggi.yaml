@@ -9,7 +9,7 @@ backend:
     QUARKUS_DATASOURCE_JDBC_URL: "jdbc:postgresql://unstable-postgres-rw:5432/presentnow"
 
 frontend:
-  image:  ghcr.io/workaround-org/presentnow-frontend:dev-29
+  image:  ghcr.io/workaround-org/presentnow-frontend:dev-30
   replicas: 2
   resources:
     limits:
