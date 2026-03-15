@@ -18,9 +18,13 @@ spec:
         - name: api
           image: {{ .Values.backend.image }}
           imagePullPolicy: Always
+          {{- $corsOrigins := list }}
+          {{- range .Values.ingress.hosts }}
+          {{- $corsOrigins = append $corsOrigins (printf "https://%s" .) }}
+          {{- end }}
           env:
             - name: QUARKUS_HTTP_CORS_ORIGINS
-              value: "https://{{ .Values.ingress.hosts }}"
+              value: {{ join "," $corsOrigins | quote }}
             {{- if .Values.backend.env.QUARKUS_DATASOURCE_JDBC_URL }}
             - name: QUARKUS_DATASOURCE_JDBC_URL
               value: {{ .Values.backend.env.QUARKUS_DATASOURCE_JDBC_URL | quote }}
