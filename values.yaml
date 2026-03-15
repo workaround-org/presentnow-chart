@@ -9,7 +9,7 @@ backend:
       cpu: "100m"
       memory: "50Mi"
   env:
-    QUARKUS_DATASOURCE_JDBC_URL: "jdbc:postgresql://unstable-postgres-rw:5432/presentnow"
+    QUARKUS_DATASOURCE_JDBC_URL: ""
 
 frontend:
   image:  ghcr.io/workaround-org/presentnow-frontend:dev-41
@@ -21,7 +21,6 @@ frontend:
 
 ingress:
   hosts:
-    - ideas.ha1nz.de
-    - presentnow.u-project.de
+    - presentnow.example.com
   tlsSecret: presentnow-tls
   issuer: letsencrypt-prod

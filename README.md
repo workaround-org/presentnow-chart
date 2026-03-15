@@ -9,7 +9,7 @@ A Helm chart for deploying the Present Now application, which includes a Quarkus
 - **PostgreSQL**: Database for data persistence
 - **Ingress**: Configured with TLS termination
 
-**Note**: Database credentials are managed via an external Kubernetes secret named `present-now-secrets`.
+**Note**: Database credentials are read from an external Kubernetes secret. Configure it with `backend.database.secretName` (default fallback: `unstable-postgres-quarkus`). The JDBC URL is read from that secret using `backend.database.jdbcUrlSecretKey` (default `jdbc-uri`) and falls back to `backend.env.QUARKUS_DATASOURCE_JDBC_URL` when no secret name is configured.
 
 ## Prerequisites
 
@@ -22,25 +22,26 @@ A Helm chart for deploying the Present Now application, which includes a Quarkus
 The chart requires a Kubernetes secret containing database credentials. Create it before installing the chart:
 
 ```bash
-kubectl create secret generic present-now-secrets \
-  --from-literal=postgres-user=your-username \
-  --from-literal=postgres-password=your-password
+kubectl create secret generic presentnow-postgres-app \
+  --from-literal=username=your-username \
+  --from-literal=password=your-password \
+  --from-literal=jdbc-uri='jdbc:postgresql://your-postgres-rw:5432/presentnow'
 ```
 
-Replace `your-username` and `your-password` with your actual database credentials.
+Replace values with your actual database credentials and JDBC URL, and set `backend.database.secretName` to that secret name.
 
 ## Installation (OCI from GitHub Container Registry)
 
 ```bash
 helm install present-now oci://ghcr.io/workaround-org/charts/present-now \
-  --version 0.1.0 \
+  --version 0.1.1 \
   -n presentnow-dev -f values-dev.yaml
 ```
 
 You can also pull and inspect the packaged chart:
 
 ```bash
-helm pull oci://ghcr.io/workaround-org/charts/present-now --version 0.1.0
+helm pull oci://ghcr.io/workaround-org/charts/present-now --version 0.1.1
 ```
 
 ## Local Installation (from this repository)
@@ -55,7 +56,7 @@ To upgrade an existing release:
 
 ```bash
 helm upgrade present-now oci://ghcr.io/workaround-org/charts/present-now \
-  --version 0.1.0 \
+  --version 0.1.1 \
   -n presentnow-dev -f values-dev.yaml
 ```
 
@@ -67,6 +68,8 @@ The following table lists the configurable parameters of the Present Now chart a
 |-----------|-------------|---------|
 | `backend.image` | Backend container image | `ghcr.io/workaround-org/presentnow-backend:latest` |
 | `backend.replicas` | Number of backend replicas | `2` |
+| `backend.database.secretName` | Secret name containing DB `username`/`password` keys | `unstable-postgres-quarkus` |
+| `backend.database.jdbcUrlSecretKey` | Secret key holding JDBC URL | `jdbc-uri` |
 | `frontend.image` | Frontend container image | `ghcr.io/workaround-org/presentnow-frontend:latest` |
 | `frontend.replicas` | Number of frontend replicas | `2` |
 | `postgres.image` | PostgreSQL container image | `postgres:16-alpine` |
