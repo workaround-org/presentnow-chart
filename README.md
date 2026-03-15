@@ -29,10 +29,24 @@ kubectl create secret generic present-now-secrets \
 
 Replace `your-username` and `your-password` with your actual database credentials.
 
-## Installation
+## Installation (OCI from GitHub Container Registry)
 
 ```bash
-helm install present-now . -n presentnow-dev
+helm install present-now oci://ghcr.io/workaround-org/charts/present-now \
+  --version 0.1.0 \
+  -n presentnow-dev -f values-dev.yaml
+```
+
+You can also pull and inspect the packaged chart:
+
+```bash
+helm pull oci://ghcr.io/workaround-org/charts/present-now --version 0.1.0
+```
+
+## Local Installation (from this repository)
+
+```bash
+helm install present-now . -n presentnow-dev -f values-dev.yaml
 ```
 
 ## Upgrading
@@ -40,7 +54,9 @@ helm install present-now . -n presentnow-dev
 To upgrade an existing release:
 
 ```bash
-helm upgrade present-now . -n presentnow-dev
+helm upgrade present-now oci://ghcr.io/workaround-org/charts/present-now \
+  --version 0.1.0 \
+  -n presentnow-dev -f values-dev.yaml
 ```
 
 ## Configuration
