@@ -66,7 +66,7 @@ The following table lists the configurable parameters of the Present Now chart a
 
 | Parameter                                 | Description | Default |
 |-------------------------------------------|-------------|---------|
-| `backend.image`                           | Backend container image | `ghcr.io/workaround-org/presentnow-backend:latest` |
+| `backend.image`                           | Backend container image | `ghcr.io/workaround-org/presentnow-backend:dev-version` |
 | `backend.replicas`                        | Number of backend replicas | `2` |
 | `backend.database.secretName`             | Secret name containing DB `username`/`password` keys | `unstable-postgres-quarkus` |
 | `backend.database.jdbcUrlSecretKey`       | Secret key holding JDBC URL | `jdbc-uri` |
@@ -76,12 +76,9 @@ The following table lists the configurable parameters of the Present Now chart a
 | `backend.oidc.clientId`                   | OIDC client ID | `""` |
 | `backend.extraEnv`                        | Additional backend env entries (Kubernetes env list format) | `[]` |
 | `backend.env.QUARKUS_DATASOURCE_JDBC_URL` | Optional direct JDBC URL override | `""` |
-| `frontend.image`                          | Frontend container image | `ghcr.io/workaround-org/presentnow-frontend:latest` |
+| `frontend.image`                          | Frontend container image | `ghcr.io/workaround-org/presentnow-frontend:dev-version` |
 | `frontend.replicas`                       | Number of frontend replicas | `2` |
-| `postgres.image`                          | PostgreSQL container image | `postgres:16-alpine` |
-| `postgres.storage`                        | PostgreSQL storage size | `1Gi` |
-| `postgres.persistence.enabled`            | Enable PostgreSQL PVC | `true` |
-| `ingress.hosts`                           | List of ingress hosts | `["presentnow.dev.ha1nz.de"]` |
+| `ingress.hosts`                           | List of ingress hosts | `["presentnow.example.com"]` |
 | `ingress.tlsSecret`                       | TLS secret name | `presentnow-tls` |
 
 ## Values
