@@ -25,6 +25,22 @@ spec:
           env:
             - name: QUARKUS_HTTP_CORS_ORIGINS
               value: {{ join "," $corsOrigins | quote }}
+            {{- if .Values.backend.searchEngine }}
+            - name: COM_GITHUB_PRESENTNOW_SEARCHENGINE
+              value: {{ .Values.backend.searchEngine | quote }}
+            {{- end }}
+            {{- if .Values.backend.oidc.audience }}
+            - name: COM_GITHUB_PRESENTNOW_AUDIENCE
+              value: {{ .Values.backend.oidc.audience | quote }}
+            {{- end }}
+            {{- if .Values.backend.oidc.authServerUrl }}
+            - name: QUARKUS_OIDC_AUTH_SERVER_URL
+              value: {{ .Values.backend.oidc.authServerUrl | quote }}
+            {{- end }}
+            {{- if .Values.backend.oidc.clientId }}
+            - name: QUARKUS_OIDC_CLIENT_ID
+              value: {{ .Values.backend.oidc.clientId | quote }}
+            {{- end }}
             {{- if .Values.backend.env.QUARKUS_DATASOURCE_JDBC_URL }}
             - name: QUARKUS_DATASOURCE_JDBC_URL
               value: {{ .Values.backend.env.QUARKUS_DATASOURCE_JDBC_URL | quote }}
@@ -45,6 +61,9 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.backend.database.secretName | quote }}
                   key: password
+            {{- with .Values.backend.extraEnv }}
+            {{ toYaml . | nindent 12 }}
+            {{- end }}
           ports:
             - name: app
               containerPort: 8080

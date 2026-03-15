@@ -9,7 +9,7 @@ A Helm chart for deploying the Present Now application, which includes a Quarkus
 - **PostgreSQL**: Database for data persistence
 - **Ingress**: Configured with TLS termination
 
-**Note**: Database credentials are read from an external Kubernetes secret. Configure it with `backend.database.secretName` (default fallback: `unstable-postgres-quarkus`). The JDBC URL is read from that secret using `backend.database.jdbcUrlSecretKey` (default `jdbc-uri`) and falls back to `backend.env.QUARKUS_DATASOURCE_JDBC_URL` when no secret name is configured.
+**Note**: Database credentials are read from an external Kubernetes secret. Configure it with `backend.database.secretName` (default fallback: `unstable-postgres-quarkus`). The JDBC URL is read from that secret using `backend.database.jdbcUrlSecretKey` (default `jdbc-uri`) and falls back to `backend.env.QUARKUS_DATASOURCE_JDBC_URL` when no secret name is configured. OIDC values are configured via `backend.oidc.*`, and PresentNow settings via `backend.presentnow.*`.
 
 ## Prerequisites
 
@@ -64,19 +64,25 @@ helm upgrade present-now oci://ghcr.io/workaround-org/charts/present-now \
 
 The following table lists the configurable parameters of the Present Now chart and their default values.
 
-| Parameter | Description | Default |
-|-----------|-------------|---------|
-| `backend.image` | Backend container image | `ghcr.io/workaround-org/presentnow-backend:latest` |
-| `backend.replicas` | Number of backend replicas | `2` |
-| `backend.database.secretName` | Secret name containing DB `username`/`password` keys | `unstable-postgres-quarkus` |
-| `backend.database.jdbcUrlSecretKey` | Secret key holding JDBC URL | `jdbc-uri` |
-| `frontend.image` | Frontend container image | `ghcr.io/workaround-org/presentnow-frontend:latest` |
-| `frontend.replicas` | Number of frontend replicas | `2` |
-| `postgres.image` | PostgreSQL container image | `postgres:16-alpine` |
-| `postgres.storage` | PostgreSQL storage size | `1Gi` |
-| `postgres.persistence.enabled` | Enable PostgreSQL PVC | `true` |
-| `ingress.hosts` | List of ingress hosts | `["presentnow.dev.ha1nz.de"]` |
-| `ingress.tlsSecret` | TLS secret name | `presentnow-tls` |
+| Parameter                                 | Description | Default |
+|-------------------------------------------|-------------|---------|
+| `backend.image`                           | Backend container image | `ghcr.io/workaround-org/presentnow-backend:latest` |
+| `backend.replicas`                        | Number of backend replicas | `2` |
+| `backend.database.secretName`             | Secret name containing DB `username`/`password` keys | `unstable-postgres-quarkus` |
+| `backend.database.jdbcUrlSecretKey`       | Secret key holding JDBC URL | `jdbc-uri` |
+| `backend.searchEngine`                    | Search engine URL prefix for backend | `https://www.google.com/search?q=` |
+| `backend.oidc.audience`                   | Audience value exposed as backend env var | `""` |
+| `backend.oidc.authServerUrl`              | OIDC auth server URL | `""` |
+| `backend.oidc.clientId`                   | OIDC client ID | `""` |
+| `backend.extraEnv`                        | Additional backend env entries (Kubernetes env list format) | `[]` |
+| `backend.env.QUARKUS_DATASOURCE_JDBC_URL` | Optional direct JDBC URL override | `""` |
+| `frontend.image`                          | Frontend container image | `ghcr.io/workaround-org/presentnow-frontend:latest` |
+| `frontend.replicas`                       | Number of frontend replicas | `2` |
+| `postgres.image`                          | PostgreSQL container image | `postgres:16-alpine` |
+| `postgres.storage`                        | PostgreSQL storage size | `1Gi` |
+| `postgres.persistence.enabled`            | Enable PostgreSQL PVC | `true` |
+| `ingress.hosts`                           | List of ingress hosts | `["presentnow.dev.ha1nz.de"]` |
+| `ingress.tlsSecret`                       | TLS secret name | `presentnow-tls` |
 
 ## Values
 

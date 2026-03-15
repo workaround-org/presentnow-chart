@@ -4,12 +4,18 @@ backend:
   database:
     secretName: presentnow-postgres-app
     jdbcUrlSecretKey: jdbc-uri
+  searchEngine: "https://www.google.com/search?q="
+  oidc:
+    audience: ""
+    authServerUrl: ""
+    clientId: ""
+  extraEnv: []
+  env:
+    QUARKUS_DATASOURCE_JDBC_URL: ""
   resources:
     limits:
       cpu: "100m"
       memory: "50Mi"
-  env:
-    QUARKUS_DATASOURCE_JDBC_URL: ""
 
 frontend:
   image:  ghcr.io/workaround-org/presentnow-frontend:dev-41
