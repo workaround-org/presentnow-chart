@@ -38,7 +38,7 @@ jobs:
 
       - name: Deploy chart
         run: |
-          helm upgrade $RELEASE_NAME . -n $NAMESPACE
+          helm upgrade $RELEASE_NAME . -n $NAMESPACE -f values-dev.yaml
           helm upgrade $RELEASE_NAME . -n $MIGGI_NAMESPACE -f $MIGGI_VALUES_FILE
 
       - name: Cleanup kubeconfig
